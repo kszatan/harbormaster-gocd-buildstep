@@ -129,7 +129,7 @@ final class HarbormasterGoCDBuildStepImplementation
       ->setMethod('POST')
       ->addHeader('Confirm', 'true')
       ->setTimeout(60);
-      
+
     $viewer = PhabricatorUser::getOmnipotentUser();
     $credential_phid = $this->getSetting('credential');
     if ($credential_phid) {
@@ -142,6 +142,29 @@ final class HarbormasterGoCDBuildStepImplementation
     }
 
     return $future;
+  }
+  
+  protected function logHTTPResponse(
+    HarbormasterBuild $build,
+    HarbormasterBuildTarget $build_target,
+    BaseHTTPFuture $future,
+    $label) {
+
+    list($status, $body, $headers) = $future->resolve();
+
+    $response = '';
+    $status_code = $status->getStatusCode();
+    if ($status_code > 0 && $status_code < 100) {
+      // probably a curl error
+      $response = sprintf('Error: (%s) %s', $status_code, curl_strerror($status_code));
+    } else {
+      // otherwise it's probably an HTTP respnse code
+      $response = sprintf("HTTP %s \n%s", $status_code, $body); 
+    }
+
+    $build_target
+      ->newLog($label, $future->getData())
+      ->append($response);
   }
 
 }
