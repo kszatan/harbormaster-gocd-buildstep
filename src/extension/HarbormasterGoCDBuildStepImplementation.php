@@ -44,7 +44,42 @@ final class HarbormasterGoCDBuildStepImplementation
   }
 
   public function getEditInstructions() {
-    return 'GoCD buildstep';
+    return pht(<<<EOTEXT
+This build step type is intented to be used along with 
+[gocd-phabricator-staging-material](https://github.com/kszatan/gocd-phabricator-staging-material) and
+[gocd-phabricator-notifier](https://github.com/kszatan/gocd-phabricator-notifier) plugins for GoCD. It
+can also be used alone, just to schedule a pipeline in GoCD.
+
+Basic usage
+=====================
+1. Provide GoCD URL, credentials and pipeline name.
+
+Usage with Staging Areas
+=====================
+1. Set up a Staging Area for a repository.
+2. Add Phabricator Staging Area material that points to the staging area. Add that material to your GoCD pipeline.
+3. Provide GoCD URL, credentials and pipeline name.
+4. Optionaly, specify revision version for the material in **POST query string**, for example `%s`.
+
+Notifications
+=====================
+
+Settings
+=====================
+* **GoCD base URL** - base URL of a GoCD server (the part before /go/api/*). 
+* **Credentials** - Credentials of a user who can schedule a pipeline.
+* **Pipeline Name** - Name of a pipeline to trigger. 
+* **POST Query String** - Query string as defined in GoCD [documentation](https://api.gocd.org/current/?shell#scheduling-pipelines).
+
+Environment
+===========
+
+These variables will be available in the build environment:
+
+| Variable | Description |
+|----------|-------------|
+EOTEXT
+    , 'materials[material_name]=${buildable.diff}');
   }
 
   public function execute(
