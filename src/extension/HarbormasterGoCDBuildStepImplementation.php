@@ -54,7 +54,32 @@ final class HarbormasterGoCDBuildStepImplementation
   }
 
   public function getFieldSpecifications() {
-    return array();
+    return array(
+      'server.url' => array(
+        'name' => pht('GoCD base URL'),
+        'type' => 'text',
+        'required' => true,
+      ),
+      'credential' => array(
+        'name' => pht('Credentials'),
+        'type' => 'credential',
+        'credential.type'
+          => PassphrasePasswordCredentialType::CREDENTIAL_TYPE,
+        'credential.provides'
+          => PassphrasePasswordCredentialType::PROVIDES_TYPE,
+        'required' => true,
+      ),
+      'pipeline' => array(
+        'name' => pht('Pipeline Name'),
+        'type' => 'text',
+        'required' => true,
+      ),
+      'query.string' => array(
+        'name' => pht('POST Query String'),
+        'type' => 'text',
+        'required' => false,
+      ),
+    );
   }
 
   public function supportsWaitForMessage() {
