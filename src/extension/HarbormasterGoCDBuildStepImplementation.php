@@ -50,7 +50,22 @@ final class HarbormasterGoCDBuildStepImplementation
   public function execute(
     HarbormasterBuild $build,
     HarbormasterBuildTarget $build_target) {
+
+    $url = $this->getRequestUrl();
+    $query = $this->getQueryString($build_target->getVariables());
+    $future = $this->prepareHttpsFuture($url, $query);
+
+    $this->resolveFutures(
+      $build,
+      $build_target,
+      array($future));
+
+    $this->logHTTPResponse($build, $build_target, $future, $url);
+
+    list($status, $response) = $future->resolve();
+    if ($status->isError()) {
       throw new HarbormasterBuildFailureException();
+    }
   }
 
   public function getFieldSpecifications() {
@@ -88,6 +103,45 @@ final class HarbormasterGoCDBuildStepImplementation
 
   public function shouldWaitForMessage(HarbormasterBuildTarget $target) {
     return true;
+  }
+
+  protected function getRequestUrl() {
+    $settings = $this->getSettings();
+    $server_url = rtrim($settings['server.url'], '/');
+    $url = sprintf(
+      '%s/go/api/pipelines/%s/schedule',
+      $server_url,
+      $settings['pipeline']);
+    return $url;
+  }
+
+  protected function getQueryString(array $variables) {
+    $settings = $this->getSettings();
+    $query = $this->mergeVariables(
+      'vurisprintf',
+      $settings['query.string'],
+      $variables);
+    return $query;
+  }
+
+  protected function prepareHttpsFuture($url, $query) {
+    $future = id(new HTTPSFuture($url, $query))
+      ->setMethod('POST')
+      ->addHeader('Confirm', 'true')
+      ->setTimeout(60);
+      
+    $viewer = PhabricatorUser::getOmnipotentUser();
+    $credential_phid = $this->getSetting('credential');
+    if ($credential_phid) {
+      $key = PassphrasePasswordKey::loadFromPHID(
+        $credential_phid,
+        $viewer);
+      $future->setHTTPBasicAuthCredentials(
+        $key->getUsernameEnvelope()->openEnvelope(),
+        $key->getPasswordEnvelope());
+    }
+
+    return $future;
   }
 
 }
