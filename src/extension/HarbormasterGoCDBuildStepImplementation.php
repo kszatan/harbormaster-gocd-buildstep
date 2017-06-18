@@ -61,9 +61,6 @@ Usage with Staging Areas
 3. Provide GoCD URL, credentials and pipeline name.
 4. Optionaly, specify revision version for the material in **POST query string**, for example `%s`.
 
-Notifications
-=====================
-
 Settings
 =====================
 * **GoCD base URL** - base URL of a GoCD server (the part before /go/api/*). 
@@ -71,13 +68,6 @@ Settings
 * **Pipeline Name** - Name of a pipeline to trigger. 
 * **POST Query String** - Query string as defined in GoCD [documentation](https://api.gocd.org/current/?shell#scheduling-pipelines).
 
-Environment
-===========
-
-These variables will be available in the build environment:
-
-| Variable | Description |
-|----------|-------------|
 EOTEXT
     , 'materials[material_name]=${buildable.diff}');
   }
