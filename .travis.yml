@@ -1,0 +1,4 @@
+language: php
+php:
+    - 7.0
+script: find . -name "*.php" -exec php -l {} \; | grep -v '^No syntax errors detected'; test $? -eq 1
