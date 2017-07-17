@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kszatan/harbormaster-gocd-buildstep.svg?branch=master)](https://travis-ci.org/kszatan/harbormaster-gocd-buildstep)
+
 # harbormaster-gocd-buildstep
 Phabricator extension providing GoCD build step.
 
