@@ -3,7 +3,7 @@
 # harbormaster-gocd-buildstep
 Phabricator extension providing GoCD build step.
 
-## Instalation
+## Installation
 Clone the repository next to Phabricator directory then add it to 'load-libraries'
 setting. Assuming there are no other libraries this could look like this:
 ```
